@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Hotel Training Simulator -sirace-",
+  "description": "A call center training application where the AI acts as a hotel customer and the user acts as the reservation agent.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

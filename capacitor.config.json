@@ -1,0 +1,6 @@
+{
+  "appId": "com.siracereyes.hotelsimulator",
+  "appName": "Hotel Simulator",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
