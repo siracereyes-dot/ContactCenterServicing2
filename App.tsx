@@ -140,6 +140,21 @@ const App: React.FC = () => {
   const [hasBookedInSession, setHasBookedInSession] = useState(false);
   const [evaluation, setEvaluation] = useState<CallEvaluation | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [customApiKey, setCustomApiKey] = useState<string>(() => {
+    return localStorage.getItem("CUSTOM_GEMINI_API_KEY") || "";
+  });
+
+  const resolveApiKey = () => {
+    if (customApiKey && customApiKey.trim() !== "" && customApiKey !== "undefined" && customApiKey !== "null") {
+      return customApiKey.trim();
+    }
+    const envKey = process.env.GEMINI_API_KEY;
+    if (envKey && envKey !== "undefined" && envKey !== "null") {
+      return envKey;
+    }
+    return "";
+  };
+
   const [successToast, setSuccessToast] = useState<{
     message: string;
     subMessage: string;
@@ -211,7 +226,7 @@ const App: React.FC = () => {
 
       // Instantiate fresh client for every request to ensure latest key/config usage
       const suggestionAI = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey: resolveApiKey(),
         httpOptions: {
           headers: {
             "User-Agent": "aistudio-build",
@@ -269,7 +284,7 @@ const App: React.FC = () => {
     setEvaluation(null);
     try {
       const evalAI = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey: resolveApiKey(),
         httpOptions: {
           headers: {
             "User-Agent": "aistudio-build",
@@ -472,7 +487,7 @@ const App: React.FC = () => {
     return () => {
       geminiClient.current?.disconnect();
     };
-  }, []);
+  }, [customApiKey]);
 
   const handleIncomingCall = () => {
     setIsRinging(true);
@@ -925,6 +940,8 @@ const App: React.FC = () => {
         onToggleMute={handleToggleMute}
         selectedScenarioId={selectedScenarioId}
         setSelectedScenarioId={setSelectedScenarioId}
+        customApiKey={customApiKey}
+        setCustomApiKey={setCustomApiKey}
       />
     </div>
   );

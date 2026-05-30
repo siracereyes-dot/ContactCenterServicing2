@@ -19,6 +19,8 @@ interface PhoneInterfaceProps {
   onToggleMute: () => void;
   selectedScenarioId: string;
   setSelectedScenarioId: (value: string) => void;
+  customApiKey: string;
+  setCustomApiKey: (value: string) => void;
 }
 
 export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({ 
@@ -37,13 +39,32 @@ export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({
   isMuted,
   onToggleMute,
   selectedScenarioId,
-  setSelectedScenarioId
+  setSelectedScenarioId,
+  customApiKey,
+  setCustomApiKey
 }) => {
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const isDragging = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [showMicTip, setShowMicTip] = useState(false);
+
+  const [showApiSettings, setShowApiSettings] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState(customApiKey);
+  const [isKeySaved, setIsKeySaved] = useState(false);
+
+  useEffect(() => {
+    setTempApiKey(customApiKey);
+  }, [customApiKey]);
+
+  const handleSaveKeyClick = () => {
+    localStorage.setItem("CUSTOM_GEMINI_API_KEY", tempApiKey);
+    setCustomApiKey(tempApiKey);
+    setIsKeySaved(true);
+    setTimeout(() => {
+      setIsKeySaved(false);
+    }, 3000);
+  };
 
   useEffect(() => {
     if (isActive && !isMuted && (userVolume || 0) < 0.002) {
@@ -253,6 +274,45 @@ export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({
                   <span className="text-xs font-bold mt-1">{isIrate ? '😡 Irate' : '😊 Patient'}</span>
                 </button>
               </div>
+
+              {/* API Configuration */}
+              <div className="flex flex-col text-left mt-1 border-t border-slate-800/60 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowApiSettings(!showApiSettings)}
+                  className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-1 flex items-center justify-between w-full hover:text-white transition-colors cursor-pointer focus:outline-none"
+                >
+                  <span className="flex items-center gap-1">🔑 {customApiKey ? 'Gemini API Key (Set)' : 'Gemini API Key (Required)'}</span>
+                  <span className="text-[9px] text-blue-400 font-bold hover:underline">{showApiSettings ? 'Collapse' : 'Configure'}</span>
+                </button>
+                
+                {showApiSettings && (
+                  <div className="flex flex-col gap-1.5 bg-slate-900/40 border border-slate-800/70 p-2 rounded-lg mt-1">
+                    <p className="text-[9.5px] text-slate-400 leading-normal">
+                      Vercel deployment needs an API Key. Paste yours below to activate voice simulation in your browser:
+                    </p>
+                    <div className="flex gap-2.5 items-center">
+                      <input
+                        type="password"
+                        placeholder="AIzaSy..."
+                        value={tempApiKey}
+                        onChange={(e) => setTempApiKey(e.target.value)}
+                        className="flex-1 min-w-0 bg-slate-950 border border-slate-700/60 rounded px-2 py-1 text-[11px] text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveKeyClick}
+                        className="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-[10px] min-w-[50px] cursor-pointer"
+                      >
+                        Save
+                      </button>
+                    </div>
+                    {isKeySaved && (
+                      <span className="text-[9px] text-green-400 font-semibold">✓ Key saved to browser storage!</span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <p className="text-[9px] mt-4 text-slate-600 font-semibold uppercase tracking-wider">Caller voice selected automatically</p>
           </div>
@@ -305,8 +365,16 @@ export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({
       </div>
       
       {statusMessage && (
-        <div className="px-4 py-2 bg-red-900/50 text-red-200 text-xs text-center">
-          {statusMessage}
+        <div className="px-4 py-2.5 bg-red-950 border-t border-red-900/50 text-red-200 text-xs text-center flex flex-col gap-1 items-center justify-center">
+          <span className="font-semibold flex items-center gap-1">
+            <AlertTriangle className="h-3 w-3 text-red-400" /> 
+            {statusMessage}
+          </span>
+          {!customApiKey && (
+            <span className="text-[10px] text-red-300/85">
+              💡 Tip: Click <strong>"Configure"</strong> under Gemini API Key above to set your API key.
+            </span>
+          )}
         </div>
       )}
     </div>

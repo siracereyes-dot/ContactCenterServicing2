@@ -35,13 +35,17 @@ export class GeminiLiveClient {
   private currentUserText = "";
 
   constructor(callbacks: LiveClientCallbacks) {
-    let apiKey = process.env.GEMINI_API_KEY;
+    // Check localStorage first (crucial for client-only deployments on Vercel)
+    let apiKey = localStorage.getItem("CUSTOM_GEMINI_API_KEY") || "";
+    if (!apiKey || apiKey === "undefined" || apiKey === "null" || apiKey.trim() === "") {
+      apiKey = process.env.GEMINI_API_KEY || "";
+    }
     // Handle cases where Vite might have stringified "undefined"
-    if (!apiKey || apiKey === "undefined" || apiKey === "null") {
+    if (!apiKey || apiKey === "undefined" || apiKey === "null" || !apiKey) {
       apiKey = "";
       console.error("GEMINI_API_KEY is missing or invalid in environment variables.");
     } else {
-      console.log("GeminiLiveClient: API Key found (starts with " + apiKey.substring(0, 4) + ")");
+      console.log("GeminiLiveClient: API Key resolved (starts with " + apiKey.substring(0, 4) + ")");
     }
     this.ai = new GoogleGenAI({ 
       apiKey, 
