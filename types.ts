@@ -45,6 +45,12 @@ export interface BookingDraft {
   guests: number;
   notes: string;
   roomId?: string;
+  cardHolderName?: string;
+  cardNumber?: string;
+  cardExpiry?: string;
+  cardCvc?: string;
+  paymentMethod?: 'Card' | 'GCash' | 'PayMaya' | '';
+  paymentStatus?: 'Pending' | 'Paid';
 }
 
 export interface ChatMessage {
@@ -67,4 +73,13 @@ export interface CallEvaluation {
   strengths: string[];
   areasForImprovement: string[];
   bookingAccuracy: 'Perfect' | 'Good' | 'Needs Work';
+  communicationScore: number;
+  communicationFeedback: string;
+  communicationRatings?: {
+    clarity: number;
+    pacing: number;
+    empathy: number;
+    politeness: number;
+    paymentClarity: number;
+  };
 }

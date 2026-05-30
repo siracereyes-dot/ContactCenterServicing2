@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Phone, PhoneOff, Users, GripHorizontal } from 'lucide-react';
+import { Mic, MicOff, Phone, PhoneOff, Users, GripHorizontal, Award, Sparkles, AlertTriangle, ShieldCheck, CheckCircle } from 'lucide-react';
+import { SCENARIOS, CallScenario } from '../scenarios';
 
 interface PhoneInterfaceProps {
   isActive: boolean;
@@ -16,6 +17,8 @@ interface PhoneInterfaceProps {
   setIsIrate: (value: boolean) => void;
   isMuted: boolean;
   onToggleMute: () => void;
+  selectedScenarioId: string;
+  setSelectedScenarioId: (value: string) => void;
 }
 
 export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({ 
@@ -32,7 +35,9 @@ export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({
   isIrate,
   setIsIrate,
   isMuted,
-  onToggleMute
+  onToggleMute,
+  selectedScenarioId,
+  setSelectedScenarioId
 }) => {
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const isDragging = useRef(false);
@@ -188,44 +193,68 @@ export const PhoneInterface: React.FC<PhoneInterfaceProps> = ({
             <p className="text-slate-400 text-sm animate-pulse">Ringing...</p>
           </div>
         ) : (
-          <div className="text-center text-slate-500 w-full">
-            <p className="mb-2">Ready for training.</p>
+          <div className="text-center text-slate-500 w-full flex flex-col items-center">
+            <p className="text-slate-400 text-xs font-semibold mb-2">Simulation Operator</p>
+            
             <button 
               onClick={onIncomingCall}
-              className="mb-4 px-4 py-2 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors text-xs font-semibold flex items-center gap-2 mx-auto"
+              className="mb-4 w-full max-w-[240px] py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl shadow-lg shadow-blue-600/10 transition-all text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Phone className="h-3 w-3 text-green-500" />
+              <Phone className="h-4 w-4 animate-pulse fill-current" />
               Simulate Incoming Call
             </button>
-            <p className="text-xs mb-4">Scenario settings:</p>
             
-            {/* Config Toggles */}
-            <div className="flex flex-col gap-3 px-4">
-              
-              {/* Tagalog Toggle */}
-              <div className="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700">
-                <span className={`text-xs font-medium ${isTagalog ? 'text-blue-400' : 'text-slate-400'}`}>Tagalog Mode</span>
+            {/* Config Panel */}
+            <div className="flex flex-col gap-3 px-4 w-full">
+              {/* Scenario Selector */}
+              <div className="flex flex-col text-left">
+                <label className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Select Training Case</label>
+                <select
+                  value={selectedScenarioId}
+                  onChange={(e) => setSelectedScenarioId(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-2.5 py-2 text-xs font-semibold focus:ring-1 focus:ring-blue-500 focus:outline-none cursor-pointer"
+                >
+                  <optgroup label="General Intake" className="bg-slate-900 text-slate-400 font-bold">
+                    <option value="standard">🛎️ Standard Booking Inquiry</option>
+                  </optgroup>
+                  <optgroup label="Alterations & Special Booking" className="bg-slate-900 text-slate-400 font-bold">
+                    <option value="corporate">💼 Corporate/Group Coord.</option>
+                    <option value="modification">🔄 Complex Modification/Extension</option>
+                    <option value="cancellation">❌ Strict Cancellation Dispute</option>
+                  </optgroup>
+                  <optgroup label="In-House & Concierge" className="bg-slate-900 text-slate-400 font-bold">
+                    <option value="vip">💎 VIP / High-Maintenance Guest</option>
+                    <option value="emergency">🚨 Emergency / Maintenance Crisis</option>
+                  </optgroup>
+                  <optgroup label="Billing & Security" className="bg-slate-900 text-slate-400 font-bold">
+                    <option value="disputed">💵 Disputed Incidental Charges</option>
+                    <option value="fraud">🔒 Fraud / Double-Booking inquiry</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              {/* Toggles */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Tagalog Toggle */}
                 <button 
                   onClick={() => setIsTagalog(!isTagalog)}
-                  className={`w-10 h-5 rounded-full relative transition-colors ${isTagalog ? 'bg-blue-600' : 'bg-slate-600'}`}
+                  className={`flex flex-col justify-between p-2 rounded-lg border text-left transition-colors cursor-pointer ${isTagalog ? 'bg-blue-900/30 border-blue-500/40 text-blue-300' : 'bg-slate-800/40 border-slate-700/60 text-slate-400'}`}
                 >
-                  <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isTagalog ? 'left-6' : 'left-1'}`}></div>
+                  <span className="text-[8px] font-extrabold uppercase tracking-widest leading-none text-slate-500 mt-0.5">Language</span>
+                  <span className="text-xs font-bold mt-1">{isTagalog ? '🇵🇭 Taglish' : '🇺🇸 English'}</span>
                 </button>
-              </div>
 
-              {/* Irate Toggle */}
-              <div className="flex items-center justify-between bg-slate-800/50 p-2 rounded-lg border border-slate-700">
-                <span className={`text-xs font-medium ${isIrate ? 'text-red-400' : 'text-slate-400'}`}>Irate Customer</span>
+                {/* Irate Toggle */}
                 <button 
                   onClick={() => setIsIrate(!isIrate)}
-                  className={`w-10 h-5 rounded-full relative transition-colors ${isIrate ? 'bg-red-600' : 'bg-slate-600'}`}
+                  className={`flex flex-col justify-between p-2 rounded-lg border text-left transition-colors cursor-pointer ${isIrate ? 'bg-red-950/40 border-red-500/30 text-red-300' : 'bg-slate-800/40 border-slate-700/60 text-slate-400'}`}
                 >
-                  <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isIrate ? 'left-6' : 'left-1'}`}></div>
+                  <span className="text-[8px] font-extrabold uppercase tracking-widest leading-none text-slate-500 mt-0.5">Caller State</span>
+                  <span className="text-xs font-bold mt-1">{isIrate ? '😡 Irate' : '😊 Patient'}</span>
                 </button>
               </div>
-
             </div>
-            <p className="text-[10px] mt-4 text-slate-600">Caller will be random male/female</p>
+            <p className="text-[9px] mt-4 text-slate-600 font-semibold uppercase tracking-wider">Caller voice selected automatically</p>
           </div>
         )}
       </div>

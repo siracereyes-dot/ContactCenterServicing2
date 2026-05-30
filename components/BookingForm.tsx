@@ -167,6 +167,150 @@ export const BookingForm: React.FC<BookingFormProps> = ({ selectedRoom, onSubmit
               placeholder="Early check-in, extra pillows, etc..."
             />
           </div>
+
+          {/* Payment Method / Deposit Guarantee Options */}
+          <div className="border-t border-slate-200 pt-4 mt-2">
+            <h3 className="text-xs font-bold text-slate-700 uppercase mb-3 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Payment / Deposit Guarantee Method
+            </h3>
+
+            {/* Payment Method Tabs */}
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <button
+                type="button"
+                id="payment-method-card"
+                onClick={() => onDataChange({ ...data, paymentMethod: 'Card' })}
+                className={`py-2 px-1 text-xs font-semibold border rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
+                  data.paymentMethod === 'Card' || !data.paymentMethod
+                    ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                Credit Card
+              </button>
+
+              <button
+                type="button"
+                id="payment-method-gcash"
+                onClick={() => onDataChange({ ...data, paymentMethod: 'GCash' })}
+                className={`py-2 px-1 text-xs font-semibold border rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
+                  data.paymentMethod === 'GCash'
+                    ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
+                }`}
+              >
+                <div className="w-5 h-5 bg-blue-600 text-white flex items-center justify-center rounded-full font-bold text-[9px]">G</div>
+                GCash
+              </button>
+
+              <button
+                type="button"
+                id="payment-method-paymaya"
+                onClick={() => onDataChange({ ...data, paymentMethod: 'PayMaya' })}
+                className={`py-2 px-1 text-xs font-semibold border rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
+                  data.paymentMethod === 'PayMaya'
+                    ? 'border-green-600 bg-green-50 text-green-700 shadow-sm'
+                    : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
+                }`}
+              >
+                <div className="w-5 h-5 bg-green-600 text-white flex items-center justify-center rounded font-bold text-[9px]">M</div>
+                PayMaya
+              </button>
+            </div>
+
+            {/* Form content based on Payment Method */}
+            {(data.paymentMethod === 'Card' || !data.paymentMethod) ? (
+              <div className="space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1 uppercase">Cardholder Name</label>
+                  <input
+                    type="text"
+                    name="cardHolderName"
+                    value={data.cardHolderName || ''}
+                    onChange={handleChange}
+                    placeholder="As shown on card"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1 uppercase">Card Number</label>
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    value={data.cardNumber || ''}
+                    onChange={handleChange}
+                    placeholder="4111 2222 3333 4444"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-1 uppercase">Expiry Date</label>
+                    <input
+                      type="text"
+                      name="cardExpiry"
+                      value={data.cardExpiry || ''}
+                      onChange={handleChange}
+                      placeholder="MM/YY"
+                      maxLength={5}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-1 uppercase">CVC / CVV</label>
+                    <input
+                      type="password"
+                      name="cardCvc"
+                      value={data.cardCvc || ''}
+                      onChange={handleChange}
+                      placeholder="***"
+                      maxLength={4}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none text-center font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 flex flex-col items-center justify-center text-center gap-2">
+                <span className="text-xs text-slate-500 uppercase font-semibold">Online Payment Invoicing ({data.paymentMethod})</span>
+                <p className="text-xs text-slate-650 max-w-[280px]">
+                  Ask the customer during the live call if they would like to settle the booking deposit using {data.paymentMethod}.
+                </p>
+
+                {/* Display Payment Status Badge */}
+                <div className="flex items-center gap-2 mt-2 w-full justify-center">
+                  <span className="text-xs text-slate-700">Payment Status:</span>
+                  {data.paymentStatus === 'Paid' ? (
+                    <div id="payment-status-badge" className="flex items-center gap-1.5 px-3 py-1 bg-green-100 border border-green-200 text-green-700 rounded-full text-xs font-bold animate-pulse">
+                      <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                      PAID via {data.paymentMethod}
+                    </div>
+                  ) : (
+                    <div id="payment-status-badge" className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 rounded-full text-xs font-bold">
+                      <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping"></span>
+                      PENDING AI Confirmation
+                    </div>
+                  )}
+                </div>
+
+                {/* Agent Tooltip instruction */}
+                <div className="text-[10px] bg-blue-50 text-blue-750 p-2.5 rounded-lg border border-blue-100 italic mt-2 w-full text-left">
+                  <p className="font-semibold text-blue-900 not-italic mb-1">💡 Instructions for Trainee Agent:</p>
+                  1. Offer to send a secure link via {data.paymentMethod}.<br />
+                  2. Say: <strong className="text-blue-900 not-italic">"I've initiated the {data.paymentMethod} payment on your device. Please verify."</strong><br />
+                  3. Wait for the customer (Live AI) to complete the transaction and say they are done!
+                </div>
+              </div>
+            )}
+          </div>
           
           {/* Billing Summary */}
           {billingDetails && (

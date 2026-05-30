@@ -11,6 +11,6 @@
 ## Technical Details
 - Models used:
   - Live AI: `gemini-3.1-flash-live-preview`
-  - Copilot/Evaluation: `gemini-3-flash-preview`
+  - Copilot/Evaluation: `gemini-3.5-flash`
 - Audio: PCM 16kHz input, 24kHz output.
 - State: Managed in `App.tsx`, handles transcripts and copilot suggestions in real-time.
